@@ -10,8 +10,14 @@ const app=express();
 
 app.use(express.json())
 
-app.get("/products",(req,res)=>{
-    res.send("Hello World");
+app.get("/api/products", async (req,res)=>{
+   try{
+    const products=await Product.find();
+    res.status(200).json({success:true,data:products})
+   }catch(error){
+    res.status(500).json({success:false,message:"error creating product"});
+    console.error("error in creating product",error.message)
+   }
 })
 
 
@@ -32,6 +38,17 @@ try{
     console.error("error in creating product",error.message)
 }
 
+})
+
+app.delete("/api/products/:id",async (req,res)=>{
+    const {id}=req.params;
+
+    try{
+        await Product.findByIdAndDelete(id);
+          res.status(200).json({success:true,message:'product deleted'})
+    }catch(error){
+         res.status(404).json({success:false,message:'product not found'})
+    }
 })
 
 app.listen(5000,()=>{
