@@ -1,17 +1,41 @@
 import express from "express";
 import dotenv from"dotenv";
+import { connectDB } from "./config/db.js";
+import Product from "./models/product.model.js";
 
 
 dotenv.config();
 
 const app=express();
 
+app.use(express.json())
+
 app.get("/products",(req,res)=>{
     res.send("Hello World");
 })
 
 
+app.post("/api/products",async (req,res)=>{
+const product=req.body;
+
+if(!product.name || !product.price || !product.image ){
+    return res.status(400).json({success:false,message:"please provide all fields"});
+}
+
+const newProduct= new Product(product);
+
+try{
+    await newProduct.save();
+    res.status(201).json({success:true,message:"product created successfully"});
+}catch (error){
+    res.status(500).json({success:false,message:"error creating product"});
+    console.error("error in creating product",error.message)
+}
+
+})
+
 app.listen(5000,()=>{
+    connectDB();
     console.log("server statrte at port 5000")
 })
 
