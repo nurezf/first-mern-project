@@ -12,12 +12,14 @@ const app=express();
 
 app.use(express.json())
 
+const port=process.env.PORT;
+
 app.use("/api/products",productRoutes)
 
 
-app.listen(5000,()=>{
+app.listen(port,()=>{
     connectDB();
-    console.log("server statrte at port 5000")
+    console.log("server statrte at port "+port)
 })
 
 
