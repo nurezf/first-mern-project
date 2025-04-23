@@ -37,4 +37,22 @@ export const useProductStore = create((set) => ({
       };
     }
   },
+
+  fetchProducts: async () => {
+    const res = await fetch("api/products");
+    let data = {};
+    try {
+      if (res.headers.get("Content-Length") !== "0") {
+        data = await res.json();
+      }
+    } catch (err) {
+      console.error("Failed to parse JSON:", err);
+    }
+
+    if (res.ok) {
+      set({ products: data.data });
+    } else {
+      console.error(data.message || "Something went wrong");
+    }
+  },
 }));
